@@ -15,6 +15,24 @@ class UserQuery(BaseModel):
     query: str
     timestamp: float
 
+def start_chat():
+    chat = client.chats.create(
+        model='gemini-2.5-flash-lite',
+        config=types.GenerateContentConfig(
+            system_instruction=SYSTEM_INSTRUCTION,
+            temperature=TEMPERATURE
+        )
+    )
+    while (True):
+        prompt = input("Người dùng: ")
+        if prompt.lower() == 'exit':
+            break
+        user_query = UserQuery(name="million", query=prompt, timestamp=123.4)
+        response = chat.send_message(user_query.query)
+        print("CSKH: " + response.text)
+    print("CSKH: Xin chào và hẹn gặp lại quý khách!")
+    client.close()
+
 def chat(user_query: UserQuery):
     response = client.models.generate_content(
         model="gemini-2.5-flash-lite",
@@ -25,7 +43,9 @@ def chat(user_query: UserQuery):
         )
     )
     print("CSKH: " + response.text)
+    client.close()
 
 if __name__ == "__main__":
-    user_query = UserQuery(name="million", query="Hello", timestamp=123.4)
-    chat(user_query)
+    # user_query = UserQuery(name="million", query="Hello", timestamp=123.4)
+    # chat(user_query)
+    start_chat()
