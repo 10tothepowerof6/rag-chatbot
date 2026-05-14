@@ -1,16 +1,9 @@
-from pydantic import BaseModel
-
-class UserQuery(BaseModel):
-    name: str
-    query: str
-    timestamp: float
+from utils.llm import UserQuery, chat
 
 def main():
-    user = UserQuery(name="million", query="What's RAG?", timestamp="123456789")
-    
-    print(user.timestamp)
-    print(type(user.timestamp))
-    print(user.model_dump_json())
+    prompt = input("Người dùng: ")
+    user_query = UserQuery(name="million", query=prompt, timestamp=123.4)
+    chat(user_query)
 
 if __name__ == "__main__":
     main()
