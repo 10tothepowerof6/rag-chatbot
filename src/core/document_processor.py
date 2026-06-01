@@ -1,7 +1,6 @@
 from pathlib import Path
 from pydantic import BaseModel
-
-raw_data_path = Path(__file__).resolve().parent.parent.parent / "data" / "raw"
+from config.settings import RAW_DATA_PATH
 
 class Chunk(BaseModel):
     page_content: str
@@ -24,13 +23,13 @@ def read_and_process_faq(data_path: Path = None):
         list[Chunk]: A list of Chunk objects packed with metadata (source file and category).
     """
     if data_path is None:
-        data_path = raw_data_path
+        data_path = RAW_DATA_PATH
     chunks_list: list[Chunk] = []
     for file_path in data_path.glob('*.md'):
         # print(file_path);
         with open(file_path, "r", encoding="utf-8") as file:
             raw_data = file.read().split("## ")
-            current_category = raw_data[0].split('# Category: ')[-1].strip()
+            current_category = raw_data[0].replace('# Category: ', '').strip()
             current_metadata = {'source_file': file_path.name, 'category': current_category}
             for i in range(1, len(raw_data)):
                 chunk = Chunk(
@@ -40,6 +39,6 @@ def read_and_process_faq(data_path: Path = None):
                 chunks_list.append(chunk)
     return chunks_list
 
-if __name__ == "__main__":
-    clist = read_and_process_faq()
-    print(clist)
+# if __name__ == "__main__":
+#     clist = read_and_process_faq()
+#     print(clist)
