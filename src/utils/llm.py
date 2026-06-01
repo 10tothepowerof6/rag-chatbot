@@ -1,14 +1,10 @@
-import os
 from google import genai
 from google.genai import types
 from pydantic import BaseModel
-from dotenv import load_dotenv
+from config.settings import DEFAULT_MODEL, GEMINI_API_KEY, SYSTEM_INSTRUCTION, TEMPERATURE
 
-load_dotenv()
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-SYSTEM_INSTRUCTION = "Bạn là một nhân viên hỗ trợ khách hàng thông minh và tận tâm của công ty công nghệ FPT, Trả lời ngắn gọn, súc tích và chuyên nghiệp."
-TEMPERATURE = 0.0
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 class UserQuery(BaseModel):
     name: str
@@ -16,36 +12,44 @@ class UserQuery(BaseModel):
     timestamp: float
 
 def start_chat():
+    """
+    Start an interactive command-line chat session with the Gemini model
+
+    This function initializes a chat session that runs infinitely to accept
+    user input and print out the model's response until the user types 'exit'.
+    """
     chat = client.chats.create(
-        model='gemini-2.5-flash-lite',
+        model=DEFAULT_MODEL,
         config=types.GenerateContentConfig(
             system_instruction=SYSTEM_INSTRUCTION,
             temperature=TEMPERATURE
         )
     )
     while (True):
-        prompt = input("Người dùng: ")
+        prompt = input("User: ")
         if prompt.lower() == 'exit':
             break
         user_query = UserQuery(name="million", query=prompt, timestamp=123.4)
         response = chat.send_message(user_query.query)
-        print("CSKH: " + response.text)
-    print("CSKH: Xin chào và hẹn gặp lại quý khách!")
+        print("Customer Support: " + response.text)
+    print("Customer Support: Good bye and hope to see you soon!")
     client.close()
 
 def chat(user_query: UserQuery):
+    """
+    Generate a single-turn response for a structured user query.
+
+    Args:
+        user_query (UserQuery): A Pydantic model containing the 
+                                query text and query metadata.
+    """
     response = client.models.generate_content(
-        model="gemini-2.5-flash-lite",
+        model=DEFAULT_MODEL,
         contents=user_query.query,
         config=types.GenerateContentConfig(
             system_instruction=SYSTEM_INSTRUCTION,
             temperature=TEMPERATURE
         )
     )
-    print("CSKH: " + response.text)
+    print("Customer Support: " + response.text)
     client.close()
-
-if __name__ == "__main__":
-    # user_query = UserQuery(name="million", query="Hello", timestamp=123.4)
-    # chat(user_query)
-    start_chat()
