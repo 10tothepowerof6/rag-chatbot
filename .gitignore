@@ -17,3 +17,6 @@ data/
 
 # Local notes
 .internals/
+
+# Antigravity 
+.antigravitycli/
