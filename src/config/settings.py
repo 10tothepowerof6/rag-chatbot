@@ -10,6 +10,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # Centralized Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 RAW_DATA_PATH = PROJECT_ROOT / "data" / "raw"
+VECTOR_DATA_PATH = PROJECT_ROOT / "data" / "vector_db"
 
 # System prompt
 SYSTEM_INSTRUCTION = """
@@ -54,3 +55,4 @@ SYSTEM_INSTRUCTION = """
 # LLM & Embedding model configuration
 DEFAULT_MODEL = "gemini-2.5-flash-lite"
 TEMPERATURE = 0.0
+EMBEDDING_MODEL = "gemini-embedding-001"
